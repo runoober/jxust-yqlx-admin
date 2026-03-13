@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogT
 import { toast } from "sonner";
 import { Coins, Plus, Search, ArrowUpCircle, ArrowDownCircle, Clock, Trophy, X } from "lucide-react";
 
+type PointsSourceStats = Record<string, Record<string, number>>;
+
 const TX_TYPE_MAP: Record<number, string> = { 1: "获得", 2: "消耗" };
 
 export default function PointsPage() {
@@ -101,8 +103,8 @@ export default function PointsPage() {
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">来源统计</p>
                     <div className="border rounded-lg divide-y">
-                      {Object.entries(stats.source_stats).flatMap(([source, s]) =>
-                        Object.entries(s).map(([type, value]) => (
+                      {Object.entries(stats.source_stats as PointsSourceStats).flatMap(([source, sourceStats]) =>
+                        Object.entries(sourceStats).map(([type, value]) => (
                           <div key={`${source}-${type}`} className="flex items-center justify-between px-2.5 py-1.5">
                             <div className="flex items-center gap-2">
                               <Badge variant="outline" className="text-xs px-1.5 py-0 h-5">{source}</Badge>

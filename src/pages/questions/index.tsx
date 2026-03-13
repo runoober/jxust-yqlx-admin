@@ -192,7 +192,7 @@ export default function QuestionsPage() {
   });
 
   const projectMap = useMemo(() => {
-    return new Map((projectsQuery.data?.data ?? []).map((item) => [item.id, item]));
+    return new Map<number, QuestionProject>((projectsQuery.data?.data ?? []).map((item) => [item.id, item]));
   }, [projectsQuery.data]);
 
   const createProjectMut = useMutation({
