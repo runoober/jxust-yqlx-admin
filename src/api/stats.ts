@@ -3,6 +3,7 @@ import type {
   SystemOnlineStat,
   PomodoroRankingItem,
   ProjectOnlineStat,
+  AllProjectsOnlineStatResponse,
   QuestionProject,
   UserGroupedCountStat,
   PaginatedResult,
@@ -22,6 +23,10 @@ export function getQuestionProjects() {
 
 export function getProjectOnline(projectId: number) {
   return unwrap<ProjectOnlineStat>(client.get(`/stat/project/${projectId}/online`));
+}
+
+export function getAllProjectsOnlineStats() {
+  return unwrap<AllProjectsOnlineStatResponse>(client.get("/admin/stats/projects/online"));
 }
 
 export function getCountdownStatsByUser(params?: { page?: number; page_size?: number }) {

@@ -15,6 +15,7 @@ import PointsPage from "@/pages/points";
 import CourseTablesPage from "@/pages/course-tables";
 import QuestionsPage from "@/pages/questions";
 import FailRatesPage from "@/pages/failrates";
+import OrganizationsPage from "@/pages/organizations";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
       { path: "course-tables", element: <CourseTablesPage /> },
       { path: "questions", element: <QuestionsPage /> },
       { path: "failrates", element: <FailRatesPage /> },
+      { path: "organizations", element: <OrganizationsPage /> },
     ],
   },
 ]);

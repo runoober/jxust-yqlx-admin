@@ -33,6 +33,7 @@ import {
   LogOut,
   Calendar,
   Activity,
+  Building2,
 } from "lucide-react";
 
 type NavItem = {
@@ -71,6 +72,7 @@ const navGroups: NavGroup[] = [
       { title: "资料管理", href: "/materials", icon: BookOpen },
       { title: "英雄榜", href: "/heroes", icon: Trophy },
       { title: "刷题管理", href: "/questions", icon: FileText },
+      { title: "组织管理", href: "/organizations", icon: Building2 },
     ],
   },
   {

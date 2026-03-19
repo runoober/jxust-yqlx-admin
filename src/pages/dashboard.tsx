@@ -2,9 +2,8 @@ import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { getNotificationStats } from "@/api/notifications";
 import { getContributionStatsAdmin } from "@/api/contributions";
 import {
-  getSystemOnline,
+  getAllProjectsOnlineStats,
   getPomodoroRanking,
-  getProjectOnline,
   getQuestionProjects,
   getCountdownStatsByUser,
   getGPABackupStatsByUser,
@@ -21,21 +20,13 @@ function getHotnessValue(material: MaterialListItem, type: 0 | 7) {
 export default function DashboardPage() {
   const notifStats = useQuery({ queryKey: ["notification-stats"], queryFn: getNotificationStats });
   const contribStats = useQuery({ queryKey: ["contribution-stats"], queryFn: getContributionStatsAdmin });
-  const onlineStat = useQuery({ queryKey: ["system-online"], queryFn: getSystemOnline });
+  const projectOnlineStats = useQuery({
+    queryKey: ["projects-online-stats"],
+    queryFn: getAllProjectsOnlineStats,
+    select: (data) => [...data.projects].sort((a, b) => b.online_count - a.online_count || a.project_id - b.project_id),
+  });
   const pomodoroRanking = useQuery({ queryKey: ["pomodoro-ranking"], queryFn: getPomodoroRanking });
   const questionProjects = useQuery({ queryKey: ["question-projects"], queryFn: getQuestionProjects });
-  const projectOnlineStats = useQuery({
-    queryKey: ["question-projects-online", questionProjects.data?.map((project) => project.id).join(",")],
-    enabled: Boolean(questionProjects.data?.length),
-    queryFn: async () => {
-      const projects = questionProjects.data ?? [];
-      const stats = await Promise.all(projects.map(async (project) => ({
-        project,
-        online: await getProjectOnline(project.id),
-      })));
-      return stats.sort((a, b) => b.online.online_count - a.online.online_count || a.project.sort - b.project.sort);
-    },
-  });
   const hotMaterialsAll = useQuery({ queryKey: ["materials-hot", 0], queryFn: () => getTopMaterials({ limit: 15, type: 0 }) });
   const hotMaterialsWeek = useQuery({ queryKey: ["materials-hot", 7], queryFn: () => getTopMaterials({ limit: 15, type: 7 }) });
   const hotWords = useQuery({ queryKey: ["materials-hotwords-dash"], queryFn: () => getHotWords(15) });
@@ -51,9 +42,19 @@ export default function DashboardPage() {
     queryKey: ["gpa-backup-stats-by-user"],
     queryFn: () => getGPABackupStatsByUser({ page: 1, page_size: 10 }),
   });
+  const totalOnlineCount = projectOnlineStats.data?.reduce((sum, item) => sum + item.online_count, 0);
+  const questionProjectMetaById = new Map(
+    (questionProjects.data ?? []).map((project) => [
+      project.id,
+      {
+        usageCount: project.usage_count,
+        userCount: project.user_count,
+      },
+    ])
+  );
 
   const stats = [
-    { label: "当前在线", value: onlineStat.data?.online_count, icon: Activity, color: "text-emerald-500", loading: onlineStat.isLoading },
+    { label: "当前在线", value: totalOnlineCount, icon: Activity, color: "text-emerald-500", loading: projectOnlineStats.isLoading },
     { label: "通知总数", value: notifStats.data?.total_count, sub: `待审核 ${notifStats.data?.pending_count ?? 0}`, icon: Bell, color: "text-blue-500", loading: notifStats.isLoading },
     { label: "已发布通知", value: notifStats.data?.published_count, sub: `草稿 ${notifStats.data?.draft_count ?? 0}`, icon: Bell, color: "text-blue-500", loading: notifStats.isLoading },
     { label: "投稿总数", value: contribStats.data?.total_count, sub: `待审核 ${contribStats.data?.pending_count ?? 0}`, icon: FileText, color: "text-amber-500", loading: contribStats.isLoading },
@@ -84,13 +85,20 @@ export default function DashboardPage() {
       <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
         <div className="break-inside-avoid">
           <h3 className="text-sm font-semibold mb-2 flex items-center gap-1.5"><Users className="h-4 w-4 text-emerald-500" />题库项目在线</h3>
-          {questionProjects.isLoading || projectOnlineStats.isLoading ? <p className="text-xs text-muted-foreground">加载中...</p> : (
+          {projectOnlineStats.isLoading ? <p className="text-xs text-muted-foreground">加载中...</p> : (
             <div className="border rounded-lg divide-y">
-              {projectOnlineStats.data?.map(({ project, online }, index) => (
-                <div key={`${project.id}-${online.online_count}-${index}`} className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-muted/50 transition-colors">
-                  <span className="text-sm truncate flex-1 min-w-0">{project.name}</span>
-                  <span className="text-xs text-muted-foreground shrink-0">{project.question_count} 题</span>
-                  <span className="text-xs text-emerald-500 font-medium shrink-0">{online.online_count} 在线</span>
+              {projectOnlineStats.data?.map((project, index) => (
+                <div key={`${project.project_id}-${project.online_count}-${index}`} className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-muted/50 transition-colors">
+                  <span className="text-sm truncate flex-1 min-w-0">{project.project_name}</span>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground shrink-0">
+                    {typeof questionProjectMetaById.get(project.project_id)?.usageCount === "number" && (
+                      <span>{questionProjectMetaById.get(project.project_id)?.usageCount} 次</span>
+                    )}
+                    {typeof questionProjectMetaById.get(project.project_id)?.userCount === "number" && (
+                      <span>{questionProjectMetaById.get(project.project_id)?.userCount} 人</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-emerald-500 font-medium shrink-0">{project.online_count} 在线</span>
                 </div>
               ))}
               {(!projectOnlineStats.data || projectOnlineStats.data.length === 0) && <p className="text-xs text-muted-foreground py-4 text-center">暂无数据</p>}

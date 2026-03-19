@@ -446,7 +446,7 @@ function EditMaterialDialog({ material: m }: { material: MaterialListItem }) {
         <DialogHeader><DialogTitle>编辑资料描述</DialogTitle></DialogHeader>
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">{m.file_name}</p>
-          <div className="space-y-1"><Label>描述</Label><Textarea value={formValues.description} onChange={(e) => setDraft({ ...formValues, description: e.target.value })} disabled={detailLoading || mut.isPending} rows={5} className="resize-y" /></div>
+          <div className="space-y-1"><Label>描述</Label><Textarea value={formValues.description} onChange={(e) => setDraft({ ...formValues, description: e.target.value })} disabled={detailLoading || mut.isPending} rows={5} /></div>
           <div className="space-y-1"><Label>标签 (逗号分隔)</Label><Input value={formValues.tags} onChange={(e) => setDraft({ ...formValues, tags: e.target.value })} disabled={detailLoading || mut.isPending} /></div>
           <div className="flex items-center gap-2">
             <Label>推荐</Label>

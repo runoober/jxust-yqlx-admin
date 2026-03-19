@@ -224,6 +224,19 @@ export interface WhitelistUserInfo {
   created_at: string;
 }
 
+// ---- Organizations ----
+export interface Organization {
+  id: number;
+  name: string;
+  organization_type: string;
+  affiliation: string;
+  campus: string;
+  introduction: string;
+  contact: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // ---- Contributions ----
 export interface Contribution {
   id: number;
@@ -424,6 +437,16 @@ export interface SystemOnlineStat {
 export interface ProjectOnlineStat {
   project_id: number;
   online_count: number;
+}
+
+export interface AllProjectsOnlineStatItem {
+  project_id: number;
+  project_name: string;
+  online_count: number;
+}
+
+export interface AllProjectsOnlineStatResponse {
+  projects: AllProjectsOnlineStatItem[];
 }
 
 export interface QuestionProject {
