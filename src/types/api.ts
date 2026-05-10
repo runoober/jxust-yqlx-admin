@@ -490,3 +490,41 @@ export interface PomodoroRankingItem {
   pomodoro_count: number;
   rank: number;
 }
+
+// ---- Agent Chat ----
+export interface ChatConversation {
+  id: number;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  last_message_at: string | null;
+}
+
+export interface ChatConversationListResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  conversations: ChatConversation[];
+}
+
+export interface ChatToolCall {
+  type?: string;
+  id?: string;
+  function?: {
+    name?: string;
+    arguments?: string;
+  };
+}
+
+export interface ChatMessage {
+  role: "user" | "assistant" | "tool" | "system" | string;
+  content: string;
+  tool_calls?: ChatToolCall[] | null;
+  tool_call_id?: string;
+  reasoning_content?: string;
+}
+
+export interface ChatExportResponse {
+  conversation: ChatConversation;
+  messages: ChatMessage[];
+}

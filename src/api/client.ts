@@ -9,7 +9,7 @@ function resolveApiBaseURL() {
   return /\/api\/v\d+$/.test(normalized) ? normalized : `${normalized}/api/v0`;
 }
 
-const API_BASE_URL = resolveApiBaseURL();
+export const API_BASE_URL = resolveApiBaseURL();
 
 function isAuthFlowRequest(url?: string) {
   if (!url) {

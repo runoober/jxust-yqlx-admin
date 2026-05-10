@@ -34,6 +34,7 @@ import {
   Calendar,
   Activity,
   Building2,
+  BotMessageSquare,
 } from "lucide-react";
 
 type NavItem = {
@@ -66,6 +67,7 @@ const navGroups: NavGroup[] = [
     label: "内容管理",
     items: [
       { title: "通知管理", href: "/notifications", icon: Bell },
+      { title: "Agent", href: "/agent", icon: BotMessageSquare },
       { title: "内测管理", href: "/features", icon: ToggleLeft },
       { title: "投稿管理", href: "/contributions", icon: FileText },
       { title: "教师评价", href: "/reviews", icon: Star },
