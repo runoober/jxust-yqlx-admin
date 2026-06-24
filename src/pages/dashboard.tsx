@@ -2,6 +2,7 @@ import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { getNotificationStats } from "@/api/notifications";
 import { getContributionStatsAdmin } from "@/api/contributions";
 import {
+  getSystemOnline,
   getAllProjectsOnlineStats,
   getPomodoroRanking,
   getQuestionProjects,
@@ -20,6 +21,7 @@ function getHotnessValue(material: MaterialListItem, type: 0 | 7) {
 export default function DashboardPage() {
   const notifStats = useQuery({ queryKey: ["notification-stats"], queryFn: getNotificationStats });
   const contribStats = useQuery({ queryKey: ["contribution-stats"], queryFn: getContributionStatsAdmin });
+  const systemOnline = useQuery({ queryKey: ["system-online"], queryFn: getSystemOnline });
   const projectOnlineStats = useQuery({
     queryKey: ["projects-online-stats"],
     queryFn: getAllProjectsOnlineStats,
@@ -42,7 +44,7 @@ export default function DashboardPage() {
     queryKey: ["gpa-backup-stats-by-user"],
     queryFn: () => getGPABackupStatsByUser({ page: 1, page_size: 10 }),
   });
-  const totalOnlineCount = projectOnlineStats.data?.reduce((sum, item) => sum + item.online_count, 0);
+  const totalOnlineCount = systemOnline.data?.online_count;
   const questionProjectMetaById = new Map(
     (questionProjects.data ?? []).map((project) => [
       project.id,
@@ -54,7 +56,7 @@ export default function DashboardPage() {
   );
 
   const stats = [
-    { label: "当前在线", value: totalOnlineCount, icon: Activity, color: "text-emerald-500", loading: projectOnlineStats.isLoading },
+    { label: "当前在线", value: totalOnlineCount, icon: Activity, color: "text-emerald-500", loading: systemOnline.isLoading },
     { label: "通知总数", value: notifStats.data?.total_count, sub: `待审核 ${notifStats.data?.pending_count ?? 0}`, icon: Bell, color: "text-blue-500", loading: notifStats.isLoading },
     { label: "已发布通知", value: notifStats.data?.published_count, sub: `草稿 ${notifStats.data?.draft_count ?? 0}`, icon: Bell, color: "text-blue-500", loading: notifStats.isLoading },
     { label: "投稿总数", value: contribStats.data?.total_count, sub: `待审核 ${contribStats.data?.pending_count ?? 0}`, icon: FileText, color: "text-amber-500", loading: contribStats.isLoading },
