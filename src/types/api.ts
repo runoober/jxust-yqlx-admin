@@ -199,6 +199,8 @@ export interface Feature {
   feature_name: string;
   description: string;
   is_enabled: boolean;
+  user_ids: number[];
+  role_ids: number[];
   created_at: string;
   updated_at: string;
 }
@@ -206,22 +208,12 @@ export interface Feature {
 export interface UserFeatureInfo {
   feature_key: string;
   feature_name: string;
-  granted_at: string;
-  granted_by: number;
-  expires_at: string | null;
-  is_expired: boolean;
 }
 
 export interface WhitelistUserInfo {
-  id: number;
   user_id: number;
   student_id: string;
   real_name: string;
-  granted_at: string;
-  granted_by: number;
-  expires_at: string | null;
-  is_expired: boolean;
-  created_at: string;
 }
 
 // ---- Organizations ----
